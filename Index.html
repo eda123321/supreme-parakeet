@@ -1,0 +1,235 @@
+<!DOCTYPE html><html><head><base href="https://profitcalc.example.com/%20%D0%BF%D1%80%D0%B8%20%D0%BD%D0%B0%D0%B6%D0%B0%D1%82%D0%B8%D0%B8%20%D0%BD%D0%B0%20%D0%BA%D0%BD%D0%BE%D0%BF%D0%BA%D1%83%20%D1%80%D0%B5%D0%B7%D1%83%D0%BB%D1%8C%D1%82%D0%B0%D1%82%20%D0%BF%D0%BE%D1%8F%D0%B2%D0%BB%D1%8F%D0%B5%D1%82%D1%81%D1%8F%20%D1%81%D0%BF%D1%80%D0%B0%D0%B2%D0%B0,%20%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C%D0%BD%D0%B0%D1%8F%20%D0%B0%D0%B4%D0%B0%D0%BF%D1%82%D0%B0%D1%86%D0%B8%D1%8F">
+<title>Калькулятор прибыли по месяцам</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: space-between;
+    min-height: 100vh;
+}
+.calculator {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px;
+}
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+.input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.input-group input {
+    width: 45%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+button:hover {
+    background-color: #45a049;
+}
+#result-container {
+    flex-grow: 1;
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    overflow-y: auto;
+    display: none;
+}
+#result {
+    width: 100%;
+    border-collapse: collapse;
+}
+#result th, #result td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+#result th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+#result tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+    .calculator {
+        max-width: none;
+        margin: 10px;
+    }
+    #result-container {
+        margin: 10px;
+    }
+    .input-group {
+        flex-direction: column;
+    }
+    .input-group input {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="calculator" style="font-size: 0.9em; max-width: 300px;">
+    <h1 style="font-size: 1.62em;">Калькулятор прибыли по месяцам</h1>
+    <p style="text-align: center; color: #666; margin-bottom: 20px; font-size: 0.9em;">Этот калькулятор уже поможет вам рассчитать потенциальную прибыль от ваших инвестиций по месяцам. Просто введите начальные данные и нажмите кнопку "Рассчитать".</p>
+    <div class="input-group">
+        <input type="number" id="initialDeposit" placeholder="Начальный депозит" style="font-size: 0.9em;">
+        <input type="number" id="monthlyProfit" placeholder="Прибыль в % в месяц" style="font-size: 0.9em;">
+    </div>
+    <div class="input-group">
+        <input type="number" id="monthlyInvestment" placeholder="Ежемесячные инвестиции" style="font-size: 0.9em;">
+        <input type="number" id="numMonths" placeholder="Количество месяцев" style="font-size: 0.9em;">
+    </div>
+    <button onclick="calculateProfit()" style="font-size: 0.9em;">Рассчитать</button>
+    
+    <h2 style="margin-top: 30px; text-align: center; font-size: 1.44em;">Конвертер валют</h2>
+    <div class="input-group">
+        <input type="number" id="usdAmount" placeholder="Сумма в USD" style="font-size: 0.9em;">
+        <input type="number" id="exchangeRate" placeholder="Курс USD/RUB" value="88" style="font-size: 0.9em;">
+    </div>
+    <button onclick="convertCurrency()" style="margin-top: 10px; font-size: 0.9em;">Конвертировать</button>
+    <p id="conversionResult" style="text-align: center; margin-top: 20px; font-weight: bold; font-size: 0.9em;"></p>
+</div>
+
+<div id="result-container" style="font-size: 0.6em;">
+    <div>
+        <label for="currency-toggle" style="margin-right: 10px;">Валюта:</label>
+        <div class="currency-toggle-container" style="display: inline-block;">
+            <label style="margin-right: 10px;">
+                <input type="radio" name="currency" id="usd-radio" value="USD" checked="" onchange="toggleCurrency()" style="margin-right: 5px;">
+                $
+            </label>
+            <label>
+                <input type="radio" name="currency" id="rub-radio" value="RUB" onchange="toggleCurrency()" style="margin-right: 5px;">
+                ₽
+            </label>
+        </div>
+    </div>
+    <table id="result"></table>
+</div>
+
+<script>
+let currentCurrency = 'USD';
+const exchangeRate = 88; // Курс рубля к доллару
+
+function toggleCurrency() {
+    currentCurrency = document.querySelector('input[name="currency"]:checked').value;
+    calculateProfit(); // Пересчитываем и обновляем таблицу
+}
+
+function formatCurrency(amount, currency) {
+    if (currency === 'USD') {
+        return '$' + amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    } else {
+        return '₽' + (amount * exchangeRate).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+}
+
+function calculateProfit() {
+    const initialDeposit = parseFloat(document.getElementById('initialDeposit').value);
+    const monthlyProfit = parseFloat(document.getElementById('monthlyProfit').value) / 100;
+    const monthlyInvestment = parseFloat(document.getElementById('monthlyInvestment').value);
+    const months = parseInt(document.getElementById('numMonths').value);
+
+    let resultHTML = `
+        <tr>
+            <th>Месяц</th>
+            <th>Депозит</th>
+            <th>Инвестиции</th>
+            <th>Прибыль</th>
+            <th>Итого</th>
+        </tr>
+    `;
+
+    let currentDeposit = initialDeposit;
+    let totalDeposit = initialDeposit;
+    let totalInvestments = 0;
+    let totalProfit = 0;
+    let finalTotal = 0;
+
+    for (let i = 1; i <= months; i++) {
+        const profit = currentDeposit * monthlyProfit;
+        const total = currentDeposit + profit + monthlyInvestment;
+
+        resultHTML += `
+            <tr>
+                <td>${i}</td>
+                <td>${formatCurrency(currentDeposit, currentCurrency)}</td>
+                <td>${formatCurrency(monthlyInvestment, currentCurrency)}</td>
+                <td>${formatCurrency(profit, currentCurrency)}</td>
+                <td>${formatCurrency(total, currentCurrency)}</td>
+            </tr>
+        `;
+
+        currentDeposit = total;
+        totalInvestments += monthlyInvestment;
+        totalProfit += profit;
+        finalTotal = total;
+    }
+
+    // Добавляем строку с итогами
+    resultHTML += `
+        <tr style="font-weight: bold; background-color: #e6e6e6;">
+            <td>Итого</td>
+            <td>${formatCurrency(totalDeposit, currentCurrency)}</td>
+            <td>${formatCurrency(totalInvestments, currentCurrency)}</td>
+            <td>${formatCurrency(totalProfit, currentCurrency)}</td>
+            <td>${formatCurrency(finalTotal, currentCurrency)}</td>
+        </tr>
+    `;
+
+    document.getElementById('result').innerHTML = resultHTML;
+    document.getElementById('result-container').style.display = 'block';
+}
+
+function convertCurrency() {
+    const usdAmount = parseFloat(document.getElementById('usdAmount').value);
+    const exchangeRate = parseFloat(document.getElementById('exchangeRate').value);
+    
+    if (isNaN(usdAmount) || isNaN(exchangeRate)) {
+        document.getElementById('conversionResult').textContent = 'Пожалуйста, введите корректные значения';
+        return;
+    }
+    
+    const rubAmount = usdAmount * exchangeRate;
+    
+    // Форматирование числа с пробелами после тысяч
+    const formatNumber = (num) => {
+        return num.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    };
+    
+    document.getElementById('conversionResult').textContent = `${formatNumber(usdAmount)} USD = ${formatNumber(rubAmount)} RUB`;
+}
+</script>
+</body></html>
